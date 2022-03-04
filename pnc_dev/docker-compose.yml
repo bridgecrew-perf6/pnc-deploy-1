@@ -9,7 +9,7 @@ services:
     command: redis-server
 
   api:
-    image: prebenorwegian/prebenorwegian-api
+    image: prebenorwegian/pnc-api
     restart: always
     env_file:
       - ./config/api.env
@@ -20,7 +20,7 @@ services:
       - ./config/jwt-public.key:/server/jwt-public.key
 
   webapp:
-    image: prebenorwegian/prebenorwegian-webapp
+    image: prebenorwegian/pnc-webapp
     restart: "no"    
     env_file:
       - ./config/webapp.env
@@ -28,7 +28,7 @@ services:
       - webapp-static:/app/site
 
   webcomponents:
-    image: prebenorwegian/prebenorwegian-webcomponents
+    image: prebenorwegian/pnc-webcomponents
     restart: "no"    
     env_file:
       - ./config/webcomponents.env
