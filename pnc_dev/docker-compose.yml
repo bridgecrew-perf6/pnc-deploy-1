@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  redis:
+    image: redis:latest
+    restart: always
+    volumes:
+      - redis-scheduler-data:/data
+    command: redis-server
+
+  api:
+    image: prebenorwegian/prebenorwegian-api
+    restart: always
+    env_file:
+      - ./config/api.env
+    depends_on:
+      - redis
+    volumes:
+      - ./config/jwt-private.key:/server/jwt-private.key
+      - ./config/jwt-public.key:/server/jwt-public.key
+
+  webapp:
+    image: prebenorwegian/prebenorwegian-webapp
+    restart: "no"    
+    env_file:
+      - ./config/webapp.env
+    volumes:
+      - webapp-static:/app/site
+
+  webcomponents:
+    image: prebenorwegian/prebenorwegian-webcomponents
+    restart: "no"    
+    env_file:
+      - ./config/webcomponents.env
+    volumes:
+      - webcomponents-static:/app/webcomponents
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - webapp-static:/app/webapp
+      - webcomponents-static:/app/webcomponents
+    ports:
+      - ${HTTP_PORT}:80
+    depends_on:
+      - api
+      - webapp
+      - webcomponents
+
+  watchtower:
+    image: containrrr/watchtower
+    env_file:
+      - ./config/watchtower.env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKER_CONFIG_PATH}:/config.json
+
+volumes: 
+  redis-scheduler-data:
+  webapp-static:
+  webcomponents-static:
