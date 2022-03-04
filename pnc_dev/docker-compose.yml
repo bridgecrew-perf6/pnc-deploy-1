@@ -41,6 +41,8 @@ services:
       - ./config/nginx.conf:/etc/nginx/nginx.conf
       - webapp-static:/app/webapp
       - webcomponents-static:/app/webcomponents
+      - nginx-cache-webapp:/pnc_cache/webapp
+      - nginx-cache-webcomponents:/pnc_cache/webcomponents
     ports:
       - ${HTTP_PORT}:80
     depends_on:
@@ -60,3 +62,5 @@ volumes:
   redis-scheduler-data:
   webapp-static:
   webcomponents-static:
+  nginx-cache-webapp:
+  nginx-cache-webcomponents:
